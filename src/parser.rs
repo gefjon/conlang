@@ -1,9 +1,9 @@
-use std::option::NoneError;
-use failure_derive::{Fail};
-use failure::Error;
-use nom::{*, dbg};
 use crate::ast::*;
+use failure::Error;
+use failure_derive::Fail;
+use nom::{dbg, *};
 use std::io::{self, prelude::*};
+use std::option::NoneError;
 
 fn is_dec_digit(c: char) -> bool {
     c.is_ascii_digit()
@@ -37,13 +37,13 @@ fn make_number(
     exponent: Option<&str>,
 ) -> Value {
     let mut n = f64::from(str_to_int(whole_part, 10));
-    
+
     if let Some(fractional_part) = fractional_part {
         let numerator = f64::from(str_to_int(fractional_part, 10));
         let denominator = (10.0f64).powi(fractional_part.len() as _);
         n += numerator / denominator;
     }
-    
+
     if let Some(exponent) = exponent {
         let exponent = str_to_int(exponent, 10);
         n *= (10.0f64).powi(exponent as _);
@@ -107,7 +107,7 @@ macro_rules! complement_part {
     ($i:expr, $pfx:expr) => {
         match tuple!($i, tag!($pfx), dbg!(char!(':')), dbg!(value)) {
             Ok((rest, (_, _, val))) => Ok((rest, val)),
-            Err(e) => Err(e)
+            Err(e) => Err(e),
         }
     };
 }
@@ -143,15 +143,15 @@ pub struct ConlangReader<R> {
 #[derive(Debug, Fail)]
 pub enum ReaderError {
     #[fail(display = "too much input: {}", line)]
-    TooMuchInput {
-        line: String,
-    },
+    TooMuchInput { line: String },
     #[fail(display = "end of file")]
     Eof,
 }
 
 impl From<NoneError> for ReaderError {
-    fn from(_: NoneError) -> Self { ReaderError::Eof }
+    fn from(_: NoneError) -> Self {
+        ReaderError::Eof
+    }
 }
 
 impl<R: Iterator<Item = String>> ConlangReader<R> {
@@ -168,10 +168,10 @@ impl<R: Iterator<Item = String>> ConlangReader<R> {
         if remaining.is_empty() || buf.chars().all(char::is_whitespace) {
             Ok(val)
         } else {
-            Err(ReaderError::TooMuchInput { line: remaining.to_owned() })
+            Err(ReaderError::TooMuchInput {
+                line: remaining.to_owned(),
+            })
         }
-        
-        
     }
 }
 

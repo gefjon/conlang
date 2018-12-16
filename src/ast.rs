@@ -34,9 +34,11 @@ impl Value {
     pub fn make_complement(head: Value, tail: Vec<Value>) -> Value {
         match &tail[..] {
             [] => head,
-            [tail] => {
-                Rc::new(Pair { head, tail: tail.clone() }).into()
-            }
+            [tail] => Rc::new(Pair {
+                head,
+                tail: tail.clone(),
+            })
+            .into(),
             _ => {
                 let tail = Value::make_sequence(tail);
                 Rc::new(Pair { head, tail }).into()
@@ -56,7 +58,6 @@ pub trait Verb {
 
 impl PartialEq for Value {
     fn eq(&self, other: &Self) -> bool {
-        
         match (self, other) {
             (Value::Word(lhs), Value::Word(rhs)) => lhs == rhs,
             (Value::Complement(lhs), Value::Complement(rhs)) => Rc::ptr_eq(lhs, rhs),
@@ -73,21 +74,39 @@ impl fmt::Debug for Value {
             Value::Nil => write!(f, "NOTHING"),
             Value::Word(r) => fmt::Debug::fmt(r, f),
             Value::Complement(c) => fmt::Debug::fmt(c, f),
-            Value::Verb(v) => if let Some(name) = v.name() {
-                fmt::Debug::fmt(&name, f)
-            } else {
-                write!(f, "FORBIDDENMAGIC")
-            },
+            Value::Verb(v) => {
+                if let Some(name) = v.name() {
+                    fmt::Debug::fmt(&name, f)
+                } else {
+                    write!(f, "FORBIDDENMAGIC")
+                }
+            }
             Value::Number(n) => fmt::Debug::fmt(n, f),
             Value::Sequence(s) => fmt::Debug::fmt(s, f),
         }
     }
 }
 
-impl From<f64> for Value { fn from(f: f64) -> Value { Value::Number(f) } }
-impl From<Rc<Word>> for Value { fn from(w: Rc<Word>) -> Value { Value::Word(w) } }
-impl From<Rc<Complement>> for Value { fn from(c: Rc<Complement>) -> Value { Value::Complement(c) } }
-impl From<Rc<dyn Verb>> for Value { fn from(v: Rc<dyn Verb>) -> Value { Value::Verb(v) } }
+impl From<f64> for Value {
+    fn from(f: f64) -> Value {
+        Value::Number(f)
+    }
+}
+impl From<Rc<Word>> for Value {
+    fn from(w: Rc<Word>) -> Value {
+        Value::Word(w)
+    }
+}
+impl From<Rc<Complement>> for Value {
+    fn from(c: Rc<Complement>) -> Value {
+        Value::Complement(c)
+    }
+}
+impl From<Rc<dyn Verb>> for Value {
+    fn from(v: Rc<dyn Verb>) -> Value {
+        Value::Verb(v)
+    }
+}
 
 #[derive(PartialEq, Eq)]
 pub struct Word(String);
