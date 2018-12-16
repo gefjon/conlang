@@ -13,8 +13,8 @@ pub type Complement = Pair<Value, Value>;
 
 #[derive(Clone)]
 pub enum Value {
-    /// The empty `Value`
-    Nil,
+    //    /// The empty `Value`
+    //    Nil,
     /// A series of letters or phonemes or something
     Word(Rc<Word>),
     /// A pair of a `Value` and its complement
@@ -71,7 +71,7 @@ impl PartialEq for Value {
 impl fmt::Debug for Value {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Value::Nil => write!(f, "NOTHING"),
+            //            Value::Nil => write!(f, "NOTHING"),
             Value::Word(r) => fmt::Debug::fmt(r, f),
             Value::Complement(c) => fmt::Debug::fmt(c, f),
             Value::Verb(v) => {

@@ -1,8 +1,6 @@
 use crate::ast::*;
-use failure::Error;
 use failure_derive::Fail;
-use nom::{dbg, *};
-use std::io::{self, prelude::*};
+use nom::*;
 use std::option::NoneError;
 
 fn is_dec_digit(c: char) -> bool {
@@ -105,7 +103,7 @@ named!(word<&str, Value>,
 
 macro_rules! complement_part {
     ($i:expr, $pfx:expr) => {
-        match tuple!($i, tag!($pfx), dbg!(char!(':')), dbg!(value)) {
+        match tuple!($i, tag!($pfx), char!(':'), value) {
             Ok((rest, (_, _, val))) => Ok((rest, val)),
             Err(e) => Err(e),
         }
@@ -188,7 +186,7 @@ named!(value_line<&str, Value>,
 
 named!(value<&str, Value>,
        alt!(
-           complete!(complement)
+           complement
                | sequence
                | number
                | word
