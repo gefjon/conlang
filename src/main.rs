@@ -3,16 +3,17 @@
 #![feature(try_trait)]
 
 mod ast;
+mod lexer;
 mod parser;
 use std::io::{self, prelude::*};
 
 fn main() {
     let mut rl = rustyline::Editor::<()>::new();
     let mut reader = parser::ConlangReader::new(rl.iter("? ").map(Result::unwrap));
-    rep(&mut reader, &mut io::stdout())
+    repl(&mut reader, &mut io::stdout())
 }
 
-fn rep<I, O>(reader: &mut I, printer: &mut O)
+fn repl<I, O>(reader: &mut I, printer: &mut O)
 where
     I: Iterator<Item = ast::Value>,
     O: Write,

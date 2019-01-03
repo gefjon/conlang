@@ -1,5 +1,5 @@
 use crate::ast::*;
-use failure_derive::Fail;
+use failure::Fail;
 use nom::*;
 use std::option::NoneError;
 
@@ -81,13 +81,13 @@ named!(sign<&str, Sign>,
 );
 
 named!(number<&str, Value>,
-       token!(do_parse!(
+       do_parse!(
            sign: opt!(sign)
                >> whole_part: decimal
                >> fractional_part: opt!(complete!(preceded!(tag!("."), decimal)))
                >> exponent: opt!(complete!(preceded!(one_of!("eE"), decimal)))
                >> (make_number(sign, whole_part, fractional_part, exponent))
-       ))
+       )
 );
 
 named!(word_str<&str, &str>,
@@ -95,10 +95,7 @@ named!(word_str<&str, &str>,
 );
 
 named!(word<&str, Value>,
-       do_parse!(
-           name: token!(word_str)
-               >> (Value::make_word(name))
-       )
+       map!(word_str, Value::make_word)
 );
 
 macro_rules! complement_part {

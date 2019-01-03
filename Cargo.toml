@@ -7,5 +7,4 @@ edition = "2018"
 [dependencies]
 nom = { version = "4.1", features = ["std", "verbose-errors"] }
 rustyline = "3.0"
-failure = "0.1"
-failure_derive = "*"
+failure = { version = "0.1", features = ["derive"] }
